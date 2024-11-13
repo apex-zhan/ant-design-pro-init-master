@@ -10,23 +10,21 @@ const loginPath = '/user/login';
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
- * */
-export async function getInitialState(): Promise<InitDataType> {
-  const status = {
-    loginUser: undefined,
-  };
+ * 全局状态 
+ */
+export async function getInitialState(): Promise<{
+  currentUser?: API.LoginUserVO;
+}> {
+
   const fetchUserInfo = async () => {
     try {
-      const res = await getLoginUserUsingGet();
-      if (res.data) {
-        res.data = status.loginUser;
-      }
+      const msg = await getLoginUserUsingGet();
+      return msg.data;
     } catch (error) {
       history.push(loginPath);
     }
-    return status;
+    return undefined;
   };
-
   // 如果不是登录页面，执行
   const { location } = history;
   if (location.pathname !== loginPath) {
@@ -42,14 +40,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     actionsRender: () => [<Question key="doc" />],
     avatarProps: {
-      src: initialState?.currentUser?.avatar,
+      src: initialState?.currentUser?.userAvatar,
       title: <AvatarName />,
       render: (_, avatarChildren) => {
         return <AvatarDropdown>{avatarChildren}</AvatarDropdown>;
       },
     },
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.userName,
     },
     footerRender: () => <Footer />,
     onPageChange: () => {

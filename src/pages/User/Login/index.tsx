@@ -91,13 +91,16 @@ const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
+  /**
+   * 获取用户信息进行初始化
+   */
   const fetchUserInfo = async () => {
     const userInfo = await getLoginUserUsingGet();
     if (userInfo === 0) {
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
-          currentUser: userInfo,
+          currentUser: userInfo.data,
         }));
       });
     }
@@ -108,15 +111,16 @@ const Login: React.FC = () => {
       const res = await userLoginUsingPost({
         ...values,
       });
-      if (res.data) {
+      if (res.code === 0) {
         const defaultLoginSuccessMessage = '登录成功！';
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         setInitialState({
-          loginUser: res.data,
+          currentUser: res.data,
         });
+        return;
       }
       console.log(res);
     } catch (error) {
@@ -146,8 +150,8 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
-          subTitle={'Ant Design 是西湖区最具影响力的 Web 设计规范'}
+          title="Open API"
+          subTitle={'Open API是西湖区最具影响力的开放平台'}
           initialValues={{
             autoLogin: true,
           }}

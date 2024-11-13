@@ -22,6 +22,6 @@ declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
 /**
  * 全局状态
  */
-interface IntieStatus {
-  loginUser: API.UserVO;
-}
+// interface IntieStatus {
+//   loginUser: API.UserVO;
+// }
